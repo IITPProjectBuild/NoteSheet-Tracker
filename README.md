@@ -7,7 +7,7 @@ Provide step-by-step instructions on how to install your project.
 1. Clone the repository:
 
 ```sh
-git clone https://github.com/Arpit-Raj1/NoteSheet-Tracker/tree/update-arpit
+git clone https://github.com/Arpit-Raj1/NoteSheet-Tracker
 ```
 
 2. Navigate to your directory
