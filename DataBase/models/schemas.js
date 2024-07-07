@@ -24,7 +24,7 @@ IndentorSchema.pre('save', function (next) {
 
 const Indentor = mongoose.model('Indentor', IndentorSchema);
 
-//For Clubs and Events  aka Organization
+//For Clubs and Events aka Organization
 const OrgSchema = new Schema({
   orgId: ObjectId,
   orgName: String,
@@ -80,7 +80,7 @@ TempSavedSchema.pre('save', function (next) {
 
 const TempSaved = mongoose.model('TempSaved', TempSavedSchema);
 
-//
+// For NoteSheet
 const NoteSheetSchema = new Schema({
   indentorId: ObjectId,
   noteSheetId: ObjectId,
