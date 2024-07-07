@@ -45,7 +45,7 @@ const Org = mongoose.model('Org', OrgSchema);
 const TempSchema = new Schema({
   tempId: ObjectId, // Addition by Arpit
   tempName: String,
-  temContent: String,
+  tempContent: String,
   createdBy: Object, // ID of user who created  or we can rename it as just {userId}
   createdAt: { type: Date, default: Date.now }, // ISODate
   updatedAt: { type: Date, default: Date.now }, // ISODate
@@ -71,7 +71,7 @@ const TempSavedSchema = new Schema({
 });
 // Do we also have to include which level or by whom it is rejected by ? // Swagatam: We should do this ig
 // we can do it as
-// approvedBy: mongoose.Types.Array  // Those who have approved it will be in this array
+// approvedBy: [{ type: ObjectId, ref: 'Indentor' }] // Those who have approved it will be in this array
 
 TempSavedSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
@@ -119,12 +119,12 @@ const NoteSheetStatusSchema = new Schema({
 
 const NoteSheetStatus = mongoose.model('NoteSheetStatus', NoteSheetStatusSchema);
 
-// Idk anything i need to sleep
+// For Fund Tracking
 const FundSchema = new Schema({
   intendorId: ObjectId,
   orgId: ObjectId,
   noteSheetId: ObjectId,
-  AmountSpend: Number,
+  amountSpend: Number,
   date: { type: Date, default: Date.now },
   category: String,
 });
