@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
-const Schema = mongoose.Schema
-const ObjectId = mongoose.Types.ObjectId
+const Schema = mongoose.Schema;
+const ObjectId = mongoose.Types.ObjectId;
 
 // For Users
 const indentorSchema = new Schema({
@@ -14,15 +14,15 @@ const indentorSchema = new Schema({
   twoFaEnabled: Boolean,
   createdAt: Date.now, // ISODate
   updatedAt: Date.now, // ISODate
-})
+});
 
 // Updates updatedAt
 indentorSchema.pre('save', function (next) {
-  this.updatedAt = Date.now()
-  next()
-})
+  this.updatedAt = Date.now();
+  next();
+});
 
-const indentor = mongoose.model('indentor', indentorSchema)
+const indentor = mongoose.model('indentor', indentorSchema);
 
 //For Clubs and Events  aka Organization
 const orgSchema = new Schema({
@@ -32,14 +32,14 @@ const orgSchema = new Schema({
   phone: String, // Contact Phone
   createdAt: Date.now, // ISODate
   updatedAt: Date.now, // ISODate
-})
+});
 
 orgSchema.pre('save', function (next) {
-  this.updatedAt = Date.now()
-  next()
-})
+  this.updatedAt = Date.now();
+  next();
+});
 
-const org = mongoose.model('org', orgSchema)
+const org = mongoose.model('org', orgSchema);
 
 //For Templates
 const tempSchema = new Schema({
@@ -49,14 +49,14 @@ const tempSchema = new Schema({
   createdBy: Object, // ID of user who created  or we can rename it as just {userId}
   createdAt: Date.now, // ISODate
   updatedAt: Date.now, // ISODate
-})
+});
 
 tempSchema.pre('save', function (next) {
-  this.updatedAt = Date.now()
-  next()
-})
+  this.updatedAt = Date.now();
+  next();
+});
 
-const temp = mongoose('temp', tempSchema)
+const temp = mongoose('temp', tempSchema);
 
 // For Templates that will be saved
 const tempSavedSchema = new Schema({
@@ -68,17 +68,17 @@ const tempSavedSchema = new Schema({
   updatedAt: Date.now, //ISODate
   submittedAt: Date.now, //ISODate
   finalizedAt: Date.now, //ISODate
-})
+});
 // Do we also have to include which level or by whom it is rejected by ?
 // we can do it as
 // approvedBy: mongoose.Types.Array  // Those who have approved it will be in this array
 
 tempSavedSchema.pre('save', function (next) {
-  this.updatedAt = Date.now()
-  next()
-})
+  this.updatedAt = Date.now();
+  next();
+});
 
-const tempSaved = mongoose('tempSaved', tempSavedSchema)
+const tempSaved = mongoose('tempSaved', tempSavedSchema);
 
 //
 const noteSheetSchema = new Schema({
@@ -89,9 +89,9 @@ const noteSheetSchema = new Schema({
   comment: String,
   timestamp: Date.now,
   digitalSignature: String,
-})
+});
 // Will this not contain createdAt???
-const noteSheet = mongoose('noteSheet', noteSheetSchema)
+const noteSheet = mongoose('noteSheet', noteSheetSchema);
 
 // I have no idea wtf it is no 1
 const noteSheetApprovedSchema = new Schema({
@@ -102,9 +102,9 @@ const noteSheetApprovedSchema = new Schema({
   comment: String,
   timestamp: Date.now,
   digitalSignature: String,
-})
+});
 
-const noteSheetApproved = mongoose('noteSheetApproved', noteSheetApprovedSchema)
+const noteSheetApproved = mongoose('noteSheetApproved', noteSheetApprovedSchema);
 
 //  Its to late i cant figure this out
 const noteSheetStatusSchema = new Schema({
@@ -113,11 +113,11 @@ const noteSheetStatusSchema = new Schema({
   noteSheetId: ObjectId,
   remainderDate: Date.now,
   status: String, // e.g., 'Pending'
-})
+});
 
 // Have to make a funcion to change remainder date
 
-const noteSheetStatus = mongoose('noteSheetStatus', noteSheetStatusSchema)
+const noteSheetStatus = mongoose('noteSheetStatus', noteSheetStatusSchema);
 
 // Idk anything i need to sleep
 const fundSchema = new Schema({
@@ -127,6 +127,6 @@ const fundSchema = new Schema({
   AmountSpend: Number,
   date: Date.now,
   category: String,
-})
+});
 
-const fund = mongoose('fund', fundSchema)
+const fund = mongoose('fund', fundSchema);
