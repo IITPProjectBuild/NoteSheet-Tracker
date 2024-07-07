@@ -1,7 +1,7 @@
-const mongoose = require("mongoose"); // we should stick to commonJS modules for now
+const mongoose = require('mongoose'); // we should stick to commonJS modules for now
 
 const Schema = mongoose.Schema;
-const ObjectId = mongoose.Types.ObjectId;
+const ObjectId = Schema.Types.ObjectId;
 
 // For Users
 const IndentorSchema = new Schema({
@@ -13,7 +13,7 @@ const IndentorSchema = new Schema({
   role: String,
   twoFaEnabled: Boolean,
   createdAt: { type: Date, default: Date.now }, // ISODate // Swagatam: I don't think we need a default date anywhere ??
-  updatedAt: { type: Date, default: Date.now }, // ISODate 
+  updatedAt: { type: Date, default: Date.now }, // ISODate
 });
 
 // Updates updatedAt
