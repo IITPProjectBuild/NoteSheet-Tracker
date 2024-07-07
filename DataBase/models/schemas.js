@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose"); // we should stick to commonJS modules for now
 
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 
 // For Users
-const indentorSchema = new Schema({
+const IndentorSchema = new Schema({
   indentorId: ObjectId, // UserId
   indentorName: String, //Username
   email: String,
@@ -12,121 +12,121 @@ const indentorSchema = new Schema({
   passwordSalt: String,
   role: String,
   twoFaEnabled: Boolean,
-  createdAt: Date.now, // ISODate
-  updatedAt: Date.now, // ISODate
+  createdAt: { type: Date, default: Date.now }, // ISODate // Swagatam: I don't think we need a default date anywhere ??
+  updatedAt: { type: Date, default: Date.now }, // ISODate 
 });
 
 // Updates updatedAt
-indentorSchema.pre('save', function (next) {
+IndentorSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });
 
-const indentor = mongoose.model('indentor', indentorSchema);
+const Indentor = mongoose.model('Indentor', IndentorSchema);
 
 //For Clubs and Events  aka Organization
-const orgSchema = new Schema({
+const OrgSchema = new Schema({
   orgId: ObjectId,
   orgName: String,
   email: String, //Contact Email
   phone: String, // Contact Phone
-  createdAt: Date.now, // ISODate
-  updatedAt: Date.now, // ISODate
+  createdAt: { type: Date, default: Date.now }, // ISODate
+  updatedAt: { type: Date, default: Date.now }, // ISODate
 });
 
-orgSchema.pre('save', function (next) {
+OrgSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });
 
-const org = mongoose.model('org', orgSchema);
+const Org = mongoose.model('Org', OrgSchema);
 
 //For Templates
-const tempSchema = new Schema({
+const TempSchema = new Schema({
   tempId: ObjectId, // Addition by Arpit
   tempName: String,
   temContent: String,
   createdBy: Object, // ID of user who created  or we can rename it as just {userId}
-  createdAt: Date.now, // ISODate
-  updatedAt: Date.now, // ISODate
+  createdAt: { type: Date, default: Date.now }, // ISODate
+  updatedAt: { type: Date, default: Date.now }, // ISODate
 });
 
-tempSchema.pre('save', function (next) {
+TempSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });
 
-const temp = mongoose('temp', tempSchema);
+const Temp = mongoose.model('Temp', TempSchema);
 
 // For Templates that will be saved
-const tempSavedSchema = new Schema({
+const TempSavedSchema = new Schema({
   tempId: ObjectId,
   indentorId: ObjectId,
   orgId: ObjectId,
   status: String, // e.g., 'Draft', 'Submitted', 'Approved', 'Rejected'
-  createdAt: Date.now, //ISODate
-  updatedAt: Date.now, //ISODate
-  submittedAt: Date.now, //ISODate
-  finalizedAt: Date.now, //ISODate
+  createdAt: { type: Date, default: Date.now }, //ISODate
+  updatedAt: { type: Date, default: Date.now }, //ISODate
+  submittedAt: { type: Date, default: Date.now }, //ISODate
+  finalizedAt: { type: Date, default: Date.now }, //ISODate
 });
-// Do we also have to include which level or by whom it is rejected by ?
+// Do we also have to include which level or by whom it is rejected by ? // Swagatam: We should do this ig
 // we can do it as
 // approvedBy: mongoose.Types.Array  // Those who have approved it will be in this array
 
-tempSavedSchema.pre('save', function (next) {
+TempSavedSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });
 
-const tempSaved = mongoose('tempSaved', tempSavedSchema);
+const TempSaved = mongoose.model('TempSaved', TempSavedSchema);
 
 //
-const noteSheetSchema = new Schema({
+const NoteSheetSchema = new Schema({
   indentorId: ObjectId,
   noteSheetId: ObjectId,
   // user_id: ObjectId,  User id was two times in the framework why??
   action: String, // e.g., 'Submitted', 'Approved', 'Rejected'
   comment: String,
-  timestamp: Date.now,
+  timestamp: { type: Date, default: Date.now },
   digitalSignature: String,
 });
 // Will this not contain createdAt???
-const noteSheet = mongoose('noteSheet', noteSheetSchema);
+const NoteSheet = mongoose.model('NoteSheet', NoteSheetSchema);
 
 // I have no idea wtf it is no 1
-const noteSheetApprovedSchema = new Schema({
+const NoteSheetApprovedSchema = new Schema({
   intendorId: ObjectId,
   noteSheetId: ObjectId,
   approverId: ObjectId,
   status: String, // e.g., 'Forwarded', 'Rejected'
   comment: String,
-  timestamp: Date.now,
+  timestamp: { type: Date, default: Date.now },
   digitalSignature: String,
 });
 
-const noteSheetApproved = mongoose('noteSheetApproved', noteSheetApprovedSchema);
+const NoteSheetApproved = mongoose.model('NoteSheetApproved', NoteSheetApprovedSchema);
 
 //  Its to late i cant figure this out
-const noteSheetStatusSchema = new Schema({
+const NoteSheetStatusSchema = new Schema({
   intendorId: ObjectId,
   // user_id ObjectId, why are ther two ids here??
   noteSheetId: ObjectId,
-  remainderDate: Date.now,
+  remainderDate: { type: Date, default: Date.now }, // Swagatam: What's the purpose of remainderDate here ??
   status: String, // e.g., 'Pending'
 });
 
 // Have to make a funcion to change remainder date
 
-const noteSheetStatus = mongoose('noteSheetStatus', noteSheetStatusSchema);
+const NoteSheetStatus = mongoose.model('NoteSheetStatus', NoteSheetStatusSchema);
 
 // Idk anything i need to sleep
-const fundSchema = new Schema({
+const FundSchema = new Schema({
   intendorId: ObjectId,
   orgId: ObjectId,
   noteSheetId: ObjectId,
   AmountSpend: Number,
-  date: Date.now,
+  date: { type: Date, default: Date.now },
   category: String,
 });
 
-const fund = mongoose('fund', fundSchema);
+const Fund = mongoose.model('Fund', FundSchema);
