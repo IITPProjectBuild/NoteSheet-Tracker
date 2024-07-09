@@ -1,132 +1,78 @@
-const mongoose = require('mongoose'); // we should stick to commonJS modules for now
+import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
-// For Users
+// Note: mongo by default automatically creates a unique id (referenced by _id) for each of the entries in a collection
+
 const UserSchema = new Schema({
-  userId: ObjectId, // UserId
-  userName: String, //Username
+  userName: String,
   email: String,
   passwordHash: String,
   passwordSalt: String,
-  role: String,
+  role: String, // available roles: [ individual, organisation ] -> would be assigned based on emailId
+  permissions: String, // [ requestOnly, approve ] -> `approve` would give the ability to both request and approve -> would be assigned based on email
   twoFaEnabled: Boolean,
-  createdAt: { type: Date, default: Date.now }, // ISODate // Swagatam: I don't think we need a default date anywhere ??
-  updatedAt: { type: Date, default: Date.now }, // ISODate
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: Date,
 });
 
-// Updates updatedAt
 UserSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });
 
-const User = mongoose.model('User', UserSchema);
+export const User = mongoose.model('User', UserSchema);
 
-//For Clubs and Events aka Organization
-const OrgSchema = new Schema({
-  orgId: ObjectId,
-  orgName: String,
-  email: String, //Contact Email
-  phone: String, // Contact Phone
+
+const TemplateSchema = new Schema({
+  templateName: String,
+  templateContent: Object,
+  createdBy: ObjectId, // ID of user who created  or we can rename it as just {userId}
   createdAt: { type: Date, default: Date.now }, // ISODate
   updatedAt: { type: Date, default: Date.now }, // ISODate
 });
 
-OrgSchema.pre('save', function (next) {
+TemplateSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });
 
-const Org = mongoose.model('Org', OrgSchema);
+export const Template = mongoose.model('Template', TemplateSchema);
 
-//For Templates
-const TempSchema = new Schema({
-  tempId: ObjectId, // Addition by Arpit
-  tempName: String,
-  tempContent: String,
-  createdBy: Object, // ID of user who created  or we can rename it as just {userId}
-  createdAt: { type: Date, default: Date.now }, // ISODate
-  updatedAt: { type: Date, default: Date.now }, // ISODate
-});
 
-TempSchema.pre('save', function (next) {
-  this.updatedAt = Date.now();
-  next();
-});
-
-const Temp = mongoose.model('Temp', TempSchema);
-
-// For Templates that will be saved
-const TempSavedSchema = new Schema({
-  tempId: ObjectId,
-  userId: ObjectId,
-  orgId: ObjectId,
-  status: String, // e.g., 'Draft', 'Submitted', 'Approved', 'Rejected'
-  createdAt: { type: Date, default: Date.now }, //ISODate
-  updatedAt: { type: Date, default: Date.now }, //ISODate
-  submittedAt: { type: Date, default: Date.now }, //ISODate
-  finalizedAt: { type: Date, default: Date.now }, //ISODate
-});
-// Do we also have to include which level or by whom it is rejected by ? // Swagatam: We should do this ig
-// we can do it as
-// approvedBy: Shema.Types.Array // Those who have approved it will be in this array
-
-TempSavedSchema.pre('save', function (next) {
-  this.updatedAt = Date.now();
-  next();
-});
-
-const TempSaved = mongoose.model('TempSaved', TempSavedSchema);
-
-// For NoteSheet
 const NoteSheetSchema = new Schema({
-  userId: ObjectId,
-  noteSheetId: ObjectId,
-  // user_id: ObjectId,  User id was two times in the framework why??
-  action: String, // e.g., 'Submitted', 'Approved', 'Rejected'
-  comment: String,
-  timestamp: { type: Date, default: Date.now },
-  digitalSignature: String,
-});
-// Will this not contain createdAt???
-const NoteSheet = mongoose.model('NoteSheet', NoteSheetSchema);
-
-// I have no idea wtf it is no 1
-const NoteSheetApprovedSchema = new Schema({
-  userId: ObjectId,
-  noteSheetId: ObjectId,
-  approverId: ObjectId,
-  status: String, // e.g., 'Forwarded', 'Rejected'
-  comment: String,
-  timestamp: { type: Date, default: Date.now },
-  digitalSignature: String,
+  userId: ObjectId, // id of the user who created the notesheet
+  content: Object, // the content of the notesheet stored as JSON object with form-fieldnames as keys and user-input data as values
+  comments: [String], // there may be multiple comments -> stored as an array of strings
+  status: String, // available states: ['pending', 'Rejected', 'approved']
+  timestamp: Date, // time of creation
+  digitalSignatures: [String], // the notesheet will pass through multiple approvers and hence it is logical to store the signatures as an array of strings
 });
 
-const NoteSheetApproved = mongoose.model('NoteSheetApproved', NoteSheetApprovedSchema);
+export const NoteSheet = mongoose.model('NoteSheet', NoteSheetSchema);
 
-//  Its to late i cant figure this out
-const NoteSheetStatusSchema = new Schema({
-  userId: ObjectId,
-  // user_id ObjectId, why are ther two ids here??
-  noteSheetId: ObjectId,
-  remainderDate: { type: Date, default: Date.now }, // Swagatam: What's the purpose of remainderDate here ??
-  status: String, // e.g., 'Pending'
+
+const NoteSheetActionSchema = new Schema({
+  userId: ObjectId, // id of the user who created the notesheet
+  noteSheetId: ObjectId, // mongo _id of the original notesheet
+  currentlyForwardedTo: ObjectId,
+  action: String, // [approved & forwarded, rejected, approved, pending]
+  approverIds: [ObjectId], // array of _ids of the users who approved
+  timestamps: [Date], // array of timestamps when the notesheet was approved at each level
 });
 
-// Have to make a funcion to change remainder date
+export const NoteSheetAction = mongoose.model('NoteSheetAction', NoteSheetActionSchema);
 
-const NoteSheetStatus = mongoose.model('NoteSheetStatus', NoteSheetStatusSchema);
 
 // For Fund Tracking
 const FundSchema = new Schema({
   userId: ObjectId,
-  orgId: ObjectId,
-  noteSheetId: ObjectId,
   amountSpend: Number,
+  totalFunds: Number,
+  noteSheetId: ObjectId, // approved through which notesheet
   date: { type: Date, default: Date.now },
   category: String,
 });
 
-const Fund = mongoose.model('Fund', FundSchema);
+export const Fund = mongoose.model('Fund', FundSchema);
