@@ -1,72 +1,53 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useState, useEffect } from 'react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Home from './components/Home';
+import MyNoteSheets from './components/MyNoteSheets';
 
 function App() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm();
+    const [userId, setUserId] = useState('');
 
-  let userId = '1234';
+    let userInfo = { token: 'arpitraj@gmail.com' };
 
-  const createNewUser = async (data) => {
-    let response = await fetch('http://localhost:3000/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    useEffect(() => {
+        getUser(userInfo);
+    }, []);
 
-    let result = await response.text();
-    console.log(result);
-  };
+    const getUser = async (userInfo) => {
+        let response = await fetch('http://localhost:3000/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userInfo),
+        });
+        console.log(userInfo);
+        let r = await response.text();
+        setUserId(r);
+    };
+    // const userId = '1234';
+    const router = createBrowserRouter([
+        {
+            path: '/',
+            element: (
+                <>
+                    <Home userId={userId} />
+                </>
+            ),
+        },
+        {
+            path: '/mynotesheets',
+            element: (
+                <>
+                    <MyNoteSheets userId={userId} />
+                </>
+            ),
+        },
+    ]);
 
-  const createNewNoteSheet = async (data) => {
-    console.log(data);
-    let response = await fetch('http://localhost:3000/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-
-    let result = await response.text();
-    console.log(result);
-  };
-
-  const fetchNoteSheets = async (data) => {
-    let response = await fetch('http://localhost:3000/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-
-    let result = await response.json();
-    console.log(result);
-  };
-
-  return (
-    <div>
-      <form onSubmit={handleSubmit(() => createNewNoteSheet({ userId, purpose: 'createNewNoteSheet' }))}>
-        <button disabled={isSubmitting} type="submit">
-          New NoteSheet
-        </button>
-      </form>
-      <form
-        onSubmit={handleSubmit(() =>
-          createNewUser({ userName: 'Arpit Raj', purpose: 'createNewUser', email: 'arpitraj@gmail.com' })
-        )}
-      >
-        <button disabled={isSubmitting} type="submit">
-          New User
-        </button>
-      </form>
-      <form onSubmit={handleSubmit(() => fetchNoteSheets({ userId, purpose: 'fetchNoteSheets' }))}>
-        <button disabled={isSubmitting} type="submit">
-          Fetch NoteSheet
-        </button>
-      </form>
-    </div>
-  );
+    return (
+        <>
+            <RouterProvider router={router} />
+        </>
+    );
 }
 
 export default App;
