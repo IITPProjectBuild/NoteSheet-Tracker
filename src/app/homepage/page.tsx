@@ -8,10 +8,11 @@ import { FaArrowRight } from 'react-icons/fa';
 import { Approvals } from '../Component/Approvals';
 import Funds from '../Component/Funds';
 import { token } from '../context/context';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 
 export default function Home() {
     const [email, setEmail] = useState('arpitraj@gmail.com');
+
     return (
         <>
             <token.Provider value={email}>

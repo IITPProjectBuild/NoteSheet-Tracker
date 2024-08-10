@@ -4,6 +4,9 @@ import cors from 'cors';
 import connectDB from './backend/connectDB.js';
 import dotenv from 'dotenv';
 import { User, NoteSheet } from './backend/model/Schemas.js';
+import { GiMailShirt } from 'react-icons/gi';
+import { title } from 'process';
+import { time } from 'console';
 
 dotenv.config();
 const Schema = mongoose.Schema;
@@ -27,6 +30,11 @@ app.get('/newnotesheet', (req, res) => {
     res.send('New notesheet');
 });
 
+app.get('/pendingheets', (req, res) => {
+    res.send('Pending Sheets');
+});
+
+// For finding userId
 app.post('/', async (req, res) => {
     const { token } = req.body;
     const user = await User.findOne({ email: token });
@@ -34,6 +42,7 @@ app.post('/', async (req, res) => {
     res.send(userId);
 });
 
+// For finding my notesheets
 app.post('/notesheets', async (req, res) => {
     const { userId } = req.body;
     console.log(userId);
@@ -43,8 +52,9 @@ app.post('/notesheets', async (req, res) => {
     res.send(notesheet);
 });
 
+//For making new notesheets
 app.post('/newnotesheet', async (req, res) => {
-    const { userInfo, email, equips } = req.body;
+    const { title, userInfo, email, equips } = req.body;
     let user = await User.findOne({ email });
 
     const body = {
@@ -53,6 +63,7 @@ app.post('/newnotesheet', async (req, res) => {
     };
 
     const newNoteSheet = new NoteSheet({
+        title,
         userId: new mongoose.Types.ObjectId(user),
         content: body,
     });
@@ -60,6 +71,27 @@ app.post('/newnotesheet', async (req, res) => {
     await newNoteSheet.save();
     console.log(body);
     console.log('Saved');
+});
+
+// For getting all pending sheets (only for vp or gensec)
+let access = ['vp', 'gensec', 'arpitraj@gmail.com'];
+app.post('/pendingsheets', async (req, res) => {
+    let { email } = req.body;
+
+    for (let index = 0; index < access.length; index++) {
+        const element = access[index];
+        if (email == element) {
+            let arr = await NoteSheet.find(
+                { status: 'Pending' },
+                '_id title userId timestamp' // Projection
+            );
+            res.send(arr);
+            return;
+        }
+    }
+
+    let arr = await NoteSheet.find({ status: 'Pending' }, '_id title userId timestamp');
+    res.send(arr);
 });
 
 app.listen(port, () => {

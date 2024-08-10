@@ -38,6 +38,7 @@ TemplateSchema.pre('save', function (next) {
 export const Template = mongoose.model('Template', TemplateSchema);
 
 const NoteSheetSchema = new Schema({
+    title: { type: String, required: true },
     userId: { type: ObjectId, ref: 'User', required: true }, // id of the user who created the notesheet
     content: Object, // the content of the notesheet stored as JSON object with form-fieldnames as keys and user-input data as values
     templateId: { type: ObjectId, ref: 'Template' },

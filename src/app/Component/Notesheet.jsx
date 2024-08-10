@@ -50,6 +50,13 @@ const Notesheet = () => {
         date: '',
     });
 
+    const [title, setTitle] = useState('');
+
+    const handleTitleChange = (e) => {
+        const { name, value } = e.target;
+        setTitle(value);
+    };
+
     const handleFormDataChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -89,6 +96,7 @@ const Notesheet = () => {
         // Add your save functionality here. For example:
         const mergedRows = [...rows, newRow];
         const arr = {
+            title: title,
             userInfo: formData,
             equips: mergedRows,
             email,
@@ -122,6 +130,17 @@ const Notesheet = () => {
                 </div>
 
                 <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <TextField
+                            fullWidth
+                            label="Title"
+                            variant="outlined"
+                            margin="none"
+                            name="title"
+                            value={title}
+                            onChange={handleTitleChange}
+                        />
+                    </Grid>
                     <Grid item xs={6}>
                         <TextField
                             fullWidth
