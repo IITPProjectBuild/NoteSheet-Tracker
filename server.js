@@ -5,6 +5,8 @@ import connectDB from './backend/connectDB.js';
 import dotenv from 'dotenv';
 import { User, NoteSheet } from './backend/model/Schemas.js';
 import { GiMailShirt } from 'react-icons/gi';
+import { title } from 'process';
+import { time } from 'console';
 
 dotenv.config();
 const Schema = mongoose.Schema;
@@ -79,13 +81,16 @@ app.post('/pendingsheets', async (req, res) => {
     for (let index = 0; index < access.length; index++) {
         const element = access[index];
         if (email == element) {
-            let arr = await NoteSheet.find({ status: 'Pending' });
+            let arr = await NoteSheet.find(
+                { status: 'Pending' },
+                '_id title userId timestamp' // Projection
+            );
             res.send(arr);
             return;
         }
     }
 
-    let arr = await NoteSheet.find({ email: email, status: 'Pending' });
+    let arr = await NoteSheet.find({ status: 'Pending' }, '_id title userId timestamp');
     res.send(arr);
 });
 
