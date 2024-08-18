@@ -43,6 +43,7 @@ export default function UnstyledTabsIntroduction({ onTabChange }) {
                         </Tab>
                     </span>
                 </TabsList>
+                {/* Pendings */}
                 <TabPanel value={0} className="w-full p-4 mr-8">
                     <Notesheetscompile1 />
                 </TabPanel>

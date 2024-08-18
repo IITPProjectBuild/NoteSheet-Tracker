@@ -9,8 +9,8 @@ export const Notesdisplay = ({ prop }) => {
     return (
         <>
             <div className="w-full flex items-center justify-between rounded-lg border-2 p-4 my-4 hover:bg-gray-200">
-                <h2 className="text-lg ">{prop.Title}</h2>
-                <p className="text-lg ">{prop.date}</p>
+                <h2 className="text-lg ">{prop.title}</h2>
+                <p className="text-lg ">{prop.timestamp}</p>
                 <p className="text-lg ">{prop.club}</p>
             </div>
         </>

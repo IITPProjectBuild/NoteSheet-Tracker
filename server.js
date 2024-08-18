@@ -109,6 +109,7 @@ app.post('/newnotesheet', async (req, res) => {
 let access = ['vp', 'gensec', 'arpitraj@gmail.com'];
 app.post('/pendingsheets', async (req, res) => {
     let { email } = req.body;
+    console.log(email);
 
     for (let index = 0; index < access.length; index++) {
         const element = access[index];
@@ -122,7 +123,7 @@ app.post('/pendingsheets', async (req, res) => {
         }
     }
 
-    let arr = await NoteSheet.find({ status: 'Pending' }, '_id title userId timestamp');
+    let arr = await NoteSheet.find({ status: 'Pending', email: email }, '_id title userId timestamp');
     res.send(arr);
 });
 

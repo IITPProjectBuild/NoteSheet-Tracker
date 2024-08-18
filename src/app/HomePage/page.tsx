@@ -1,6 +1,6 @@
 'use client';
 import { Tabs } from '@mui/base';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import UnstyledTabsIntroduction from '../Components/Tabs';
 import { Sidebar } from '../Components/Sidebar';
@@ -10,6 +10,13 @@ import { Paginatedlist } from '../Components/Paginatedlist';
 export default function page() {
     const [id, setId] = useState(0);
     const [email, setEmail] = useState('arpitraj@gmail.com');
+    // useEffect(() => {
+    //     const storedEmail = localStorage.getItem('userEmail');
+
+    //     if (storedEmail) {
+    //         window.location.href = '/HomePage';
+    //     }
+    // }, []);
 
     return (
         <>

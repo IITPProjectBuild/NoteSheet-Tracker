@@ -75,7 +75,7 @@ export default function SignInSide() {
 
             if (result !== 'Wrong User or Password') {
                 userdata.pass = result;
-                // localStorage.setItem('userInfo', JSON.stringify(userdata));
+                localStorage.setItem('userInfo', JSON.stringify({ email: userdata.email }));
 
                 window.location.href = '/HomePage';
             } else {
