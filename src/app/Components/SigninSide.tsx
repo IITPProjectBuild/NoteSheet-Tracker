@@ -1,5 +1,6 @@
-"use client"
+'use client';
 import * as React from 'react';
+import { useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,107 +14,159 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-
+import { Calistoga } from 'next/font/google';
+import { convertLength } from '@mui/material/styles/cssUtils';
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+    // useEffect(() => {
+    //     const attemptLogin = async () => {
+    //         let storedData = localStorage.getItem('userInfo');
+    //         if (storedData) {
+    //             try {
+    //                 storedData = JSON.parse(storedData);
+    //                 let response = await fetch('http://localhost:3000/verifyuser', {
+    //                     method: 'POST',
+    //                     headers: { 'Content-Type': 'application/json' },
+    //                     body: JSON.stringify(storedData),
+    //                 });
 
-  return (
-    <ThemeProvider theme={defaultTheme} >
+    //                 let result = await response.text();
+    //                 console.log(result);
 
-      <Grid container component="main" sx={{ height: '100vh' }}>
+    //                 if (result !== 'Wrong User or Password') {
+    //                     window.location.href = '/HomePage';
+    //                 } else {
+    //                     console.error('Verification failed:', result);
+    //                     alert('Verification failed');
+    //                 }
+    //             } catch (error) {
+    //                 console.error('Error:', error);
+    //                 alert('An error occurred');
+    //             }
+    //         }
+    //     };
 
-        <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={7}
-          sx={{
-            backgroundImage:
-              'url("/image.png")',
+    //     const timeoutId = setTimeout(attemptLogin, 1000);
 
-            backgroundColor: (t) =>
-              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-            backgroundSize: 'cover',
-            backgroundPosition: 'left',
-          }}
-        />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-          <Box
-            sx={{
-              my: 8,
-              mx: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent:'evenly',
-              alignItems: 'center',
-            }}
-          >
-            <img src="/iitp logo.png" alt="" />
-           
-            <Typography component="h1" variant="h5" className='rounded-2xl hover:shadow-2xl'>
-              Sign In
-            </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-             <Link href="HomePage"><Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Sign In
-              </Button></Link> 
-              <Grid container>
-                <Grid item xs>
-                  <Link href="#" className='hover:border-b hover:border-blue-600 hover:text-blue-500'>
-                    Forgot password?
-                  </Link>
+    //     return () => clearTimeout(timeoutId);
+    // }, []);
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+
+        const userdata = {
+            email: data.get('email'),
+            pass: data.get('password'),
+        };
+
+        try {
+            let response = await fetch('http://localhost:3000/verifyuser', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userdata),
+            });
+
+            // Check if the response is successful
+            let result = await response.text();
+
+            if (result !== 'Wrong User or Password') {
+                userdata.pass = result;
+                // localStorage.setItem('userInfo', JSON.stringify(userdata));
+
+                window.location.href = '/HomePage';
+            } else {
+                // Handle other responses
+                alert('Login failed: ' + result);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred');
+        }
+    };
+
+    return (
+        <>
+            <ThemeProvider theme={defaultTheme}>
+                <Grid container component="main" sx={{ height: '100vh' }}>
+                    <CssBaseline />
+                    <Grid
+                        item
+                        xs={false}
+                        sm={4}
+                        md={7}
+                        sx={{
+                            backgroundImage: 'url("/image.png")',
+
+                            backgroundColor: (t) =>
+                                t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'left',
+                        }}
+                    />
+                    <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+                        <Box
+                            sx={{
+                                my: 8,
+                                mx: 1,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'evenly',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <img src="/iitp logo.png" alt="" />
+
+                            <Typography component="h1" variant="h5" className="rounded-2xl hover:shadow-2xl">
+                                Sign In
+                            </Typography>
+                            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    label="Email Address"
+                                    name="email"
+                                    autoComplete="email"
+                                    autoFocus
+                                />
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    id="password"
+                                    autoComplete="current-password"
+                                />
+                                <FormControlLabel
+                                    control={<Checkbox value="remember" color="primary" />}
+                                    label="Remember me"
+                                />
+                                <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+                                    Sign In
+                                </Button>
+                                <Grid container>
+                                    <Grid item xs>
+                                        <Link
+                                            href="#"
+                                            className="hover:border-b hover:border-blue-600 hover:text-blue-500"
+                                        >
+                                            Forgot password?
+                                        </Link>
+                                    </Grid>
+                                    <Grid item></Grid>
+                                </Grid>
+                            </Box>
+                        </Box>
+                    </Grid>
                 </Grid>
-                <Grid item>
-                 
-                </Grid>
-              </Grid>
-             
-            </Box>
-          </Box>
-        </Grid>
-      </Grid>
-    </ThemeProvider>
-  );
+            </ThemeProvider>
+        </>
+    );
 }

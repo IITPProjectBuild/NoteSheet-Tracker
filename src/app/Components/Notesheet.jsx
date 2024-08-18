@@ -16,9 +16,7 @@ import {
     IconButton,
 } from '@mui/material';
 
-
 const Notesheet = () => {
-   
     const [rows, setRows] = useState([]);
 
     const createNewNoteSheet = async (e) => {

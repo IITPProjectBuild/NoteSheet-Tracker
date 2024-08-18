@@ -1,8 +1,12 @@
-import React from 'react'
-import SignInSide from '../Components/SigninSide'
+import React from 'react';
+import SignInSide from '../Components/SigninSide';
 
 export default function page() {
-  return (
-    <div><SignInSide/></div>
-  )
+    return (
+        <>
+            <div>
+                <SignInSide />
+            </div>
+        </>
+    );
 }
