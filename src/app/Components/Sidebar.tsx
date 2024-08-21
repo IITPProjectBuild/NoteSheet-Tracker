@@ -71,13 +71,13 @@ export const Sidebar = () => {
                             NEW NOTESHEET
                         </li>
                     </Link>
-
-                    <li className="mt-2 flex items-center hover:shadow-xl hover:text-blue-700 hover:border-l-4 w-full justify-center radius-lg border-blue-600">
+<Link href="Upload"><li className="mt-2 flex items-center hover:shadow-xl hover:text-blue-700 hover:border-l-4 w-full justify-center radius-lg border-blue-600">
                         <span className="mr-2" onClick={handleOpen}>
                             <FaUpload />
                         </span>
                         UPLOAD NOTESHEET
-                    </li>
+                    </li></Link>
+                    
                     <li className="mt-2 flex items-center hover:shadow-xl hover:text-blue-700 hover:border-l-4 w-full justify-center h-12 radius-lg border-blue-600">
                         <span className="mr-2" onClick={handleOpen}>
                             <FaGear />

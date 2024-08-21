@@ -1,5 +1,6 @@
 'use client';
 import * as React from 'react';
+import { useState } from 'react';
 import { useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -16,11 +17,18 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Calistoga } from 'next/font/google';
 import { convertLength } from '@mui/material/styles/cssUtils';
+import { IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleClickShowPassword = () => {
+      setShowPassword((prevShowPassword) => !prevShowPassword);
+    };
     // useEffect(() => {
     //     const attemptLogin = async () => {
     //         let storedData = localStorage.getItem('userInfo');
@@ -63,29 +71,30 @@ export default function SignInSide() {
             pass: data.get('password'),
         };
 
-        try {
-            let response = await fetch('http://localhost:3000/verifyuser', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(userdata),
-            });
+        // try {
+        //     let response = await fetch('http://localhost:3000/verifyuser', {
+        //         method: 'POST',
+        //         headers: { 'Content-Type': 'application/json' },
+        //         body: JSON.stringify(userdata),
+        //     });
 
-            // Check if the response is successful
-            let result = await response.text();
+        //     // Check if the response is successful
+        //     let result = await response.text();
 
-            if (result !== 'Wrong User or Password') {
-                userdata.pass = result;
-                localStorage.setItem('userInfo', JSON.stringify({ email: userdata.email }));
+        //     if (result !== 'Wrong User or Password') {
+        //         userdata.pass = result;
+        //         localStorage.setItem('userInfo', JSON.stringify({ email: userdata.email }));
 
-                window.location.href = '/HomePage';
-            } else {
-                // Handle other responses
-                alert('Login failed: ' + result);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred');
-        }
+        //         window.location.href = '/HomePage';
+        //     } else {
+        //         // Handle other responses
+        //         alert('Login failed: ' + result);
+        //     }
+        // } catch (error) {
+        //     console.error('Error:', error);
+        //     alert('An error occurred');
+        // }
+
     };
 
     return (
@@ -135,15 +144,28 @@ export default function SignInSide() {
                                     autoFocus
                                 />
                                 <TextField
-                                    margin="normal"
-                                    required
-                                    fullWidth
-                                    name="password"
-                                    label="Password"
-                                    type="password"
-                                    id="password"
-                                    autoComplete="current-password"
-                                />
+      margin="normal"
+      required
+      fullWidth
+      name="password"
+      label="Password"
+      type={showPassword ? 'text' : 'password'}
+      id="password"
+      autoComplete="current-password"
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton
+              aria-label="toggle password visibility"
+              onClick={handleClickShowPassword}
+              edge="end"
+            >
+              {showPassword ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
+    />
                                 <FormControlLabel
                                     control={<Checkbox value="remember" color="primary" />}
                                     label="Remember me"
