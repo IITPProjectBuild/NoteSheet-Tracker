@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import connectDB from './backend/connectDB.js';
 import dotenv from 'dotenv';
+import createPdf from './serverUtils/createPdf.js';
 import { User, NoteSheet } from './backend/model/Schemas.js';
 import { GiMailShirt } from 'react-icons/gi';
 import { title } from 'process';
@@ -69,6 +70,7 @@ app.post('/newnotesheet', async (req, res) => {
     });
 
     await newNoteSheet.save();
+    await createPdf(body, "./public/pdfLogo.png", `./temporaryPdfStorage/output-${Date.now()}.pdf`);
     console.log(body);
     console.log('Saved');
 });
