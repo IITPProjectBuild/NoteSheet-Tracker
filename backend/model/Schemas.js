@@ -6,8 +6,7 @@ const ObjectId = Schema.Types.ObjectId;
 const UserSchema = new Schema({
     userName: String,
     email: String,
-    passwordHash: String,
-    passwordSalt: String,
+    password: String,
     role: String, // available roles: [ individual, organisation ] -> would be assigned based on emailId
     permissions: String, // [ requestOnly, approve ] -> `approve` would give the ability to both request and approve -> would be assigned based on email
     twoFaEnabled: Boolean,

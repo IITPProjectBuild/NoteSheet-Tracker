@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 import cors from 'cors';
 import connectDB from './backend/connectDB.js';
 import dotenv from 'dotenv';
@@ -35,12 +36,43 @@ app.get('/pendingheets', (req, res) => {
     res.send('Pending Sheets');
 });
 
+app.get('/verifyuser', (req, res) => {
+    res.send('Verifying users');
+});
+
 // For finding userId
 app.post('/', async (req, res) => {
     const { token } = req.body;
     const user = await User.findOne({ email: token });
     const userId = user._id.toString();
     res.send(userId);
+});
+
+//For verifying user
+//Adding token JWT
+app.post('/verifyuser', async (req, res) => {
+    const { email, pass } = req.body;
+    try {
+        let userinfo = await User.findOne({ email: email });
+
+        if (userinfo.length == 0) {
+            return res.status(404).send('Wrong User or Password');
+        }
+
+        let userpassword = userinfo.password;
+        if (userpassword !== pass)
+            if (await bcrypt.compare(pass, userpassword)) {
+                res.send(userpassword);
+            } else {
+                res.status(401).send('Wrong User or Password');
+            }
+        else {
+            res.send(userpassword);
+        }
+    } catch (err) {
+        console.error('Error', err);
+        res.status(500).send('Internal server error');
+    }
 });
 
 // For finding my notesheets
@@ -79,6 +111,7 @@ app.post('/newnotesheet', async (req, res) => {
 let access = ['vp', 'gensec', 'arpitraj@gmail.com'];
 app.post('/pendingsheets', async (req, res) => {
     let { email } = req.body;
+    console.log(email);
 
     for (let index = 0; index < access.length; index++) {
         const element = access[index];
@@ -92,7 +125,7 @@ app.post('/pendingsheets', async (req, res) => {
         }
     }
 
-    let arr = await NoteSheet.find({ status: 'Pending' }, '_id title userId timestamp');
+    let arr = await NoteSheet.find({ status: 'Pending', email: email }, '_id title userId timestamp');
     res.send(arr);
 });
 

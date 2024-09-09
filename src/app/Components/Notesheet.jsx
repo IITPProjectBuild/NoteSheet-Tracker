@@ -15,10 +15,8 @@ import {
     Grid,
     IconButton,
 } from '@mui/material';
-import { token } from '../context/context';
 
 const Notesheet = () => {
-    const email = useContext(token);
     const [rows, setRows] = useState([]);
 
     const createNewNoteSheet = async (e) => {
