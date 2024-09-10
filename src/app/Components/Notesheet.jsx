@@ -97,7 +97,7 @@ const Notesheet = () => {
             title: title,
             userInfo: formData,
             equips: mergedRows,
-            email,
+            // email: email,
         };
         console.log(arr);
         createNewNoteSheet(arr);

@@ -102,7 +102,7 @@ app.post('/newnotesheet', async (req, res) => {
     });
 
     await newNoteSheet.save();
-    await createPdf({ ...body, title }, "./public/pdfLogo.png", `./temporaryPdfStorage/output-${Date.now()}.pdf`);
+    await createPdf({ ...body, title }, './public/pdfLogo.png', `./temporaryPdfStorage/output-${Date.now()}.pdf`);
     console.log(body);
     console.log('Saved');
 });
