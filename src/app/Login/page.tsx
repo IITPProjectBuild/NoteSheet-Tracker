@@ -1,3 +1,4 @@
+'user client';
 import React from 'react';
 import SignInSide from '../Components/SigninSide';
 

@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { Data } from '../../../public/Data'; // Ensure this path is correct
@@ -5,10 +6,11 @@ import { Notesdisplay } from './Notesdisplay';
 import { Calistoga } from 'next/font/google';
 
 export const Notesheetscompile1 = () => {
-    const [email, setEmail] = useState(() => {
-        const storedUserInfo = localStorage.getItem('userInfo');
-        return storedUserInfo ? JSON.parse(storedUserInfo).email : '';
-    });
+    // const [email, setEmail] = useState(() => {
+    //     const storedUserInfo = localStorage.getItem('userInfo');
+    //     return storedUserInfo ? JSON.parse(storedUserInfo).email : '';
+    // });
+    const [email, setEmail] = useState('arpitraj@gmail.com');
 
     interface PendingItem {
         _id: string;

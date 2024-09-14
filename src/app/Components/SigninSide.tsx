@@ -27,40 +27,8 @@ export default function SignInSide() {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleClickShowPassword = () => {
-      setShowPassword((prevShowPassword) => !prevShowPassword);
+        setShowPassword((prevShowPassword) => !prevShowPassword);
     };
-    // useEffect(() => {
-    //     const attemptLogin = async () => {
-    //         let storedData = localStorage.getItem('userInfo');
-    //         if (storedData) {
-    //             try {
-    //                 storedData = JSON.parse(storedData);
-    //                 let response = await fetch('http://localhost:3000/verifyuser', {
-    //                     method: 'POST',
-    //                     headers: { 'Content-Type': 'application/json' },
-    //                     body: JSON.stringify(storedData),
-    //                 });
-
-    //                 let result = await response.text();
-    //                 console.log(result);
-
-    //                 if (result !== 'Wrong User or Password') {
-    //                     window.location.href = '/HomePage';
-    //                 } else {
-    //                     console.error('Verification failed:', result);
-    //                     alert('Verification failed');
-    //                 }
-    //             } catch (error) {
-    //                 console.error('Error:', error);
-    //                 alert('An error occurred');
-    //             }
-    //         }
-    //     };
-
-    //     const timeoutId = setTimeout(attemptLogin, 1000);
-
-    //     return () => clearTimeout(timeoutId);
-    // }, []);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -71,30 +39,32 @@ export default function SignInSide() {
             pass: data.get('password'),
         };
 
-        // try {
-        //     let response = await fetch('http://localhost:3000/verifyuser', {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify(userdata),
-        //     });
+        try {
+            let response = await fetch('http://localhost:3000/verifyuser', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userdata),
+            });
 
-        //     // Check if the response is successful
-        //     let result = await response.text();
+            // Check if the response is successful
+            let result = await response.text();
 
-        //     if (result !== 'Wrong User or Password') {
-        //         userdata.pass = result;
-        //         localStorage.setItem('userInfo', JSON.stringify({ email: userdata.email }));
+            if (result !== 'Wrong User or Password') {
+                userdata.pass = result;
+                localStorage.setItem('userInfo', JSON.stringify({ email: userdata.email }));
 
-        //         window.location.href = '/HomePage';
-        //     } else {
-        //         // Handle other responses
-        //         alert('Login failed: ' + result);
-        //     }
-        // } catch (error) {
-        //     console.error('Error:', error);
-        //     alert('An error occurred');
-        // }
-
+                window.location.href = '/HomePage';
+            } else {
+                // Handle other responses
+                alert('Login failed: ' + result);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred');
+        }
     };
 
     return (
@@ -144,28 +114,28 @@ export default function SignInSide() {
                                     autoFocus
                                 />
                                 <TextField
-      margin="normal"
-      required
-      fullWidth
-      name="password"
-      label="Password"
-      type={showPassword ? 'text' : 'password'}
-      id="password"
-      autoComplete="current-password"
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <IconButton
-              aria-label="toggle password visibility"
-              onClick={handleClickShowPassword}
-              edge="end"
-            >
-              {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
-          </InputAdornment>
-        ),
-      }}
-    />
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    name="password"
+                                    label="Password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    id="password"
+                                    autoComplete="current-password"
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={handleClickShowPassword}
+                                                    edge="end"
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                />
                                 <FormControlLabel
                                     control={<Checkbox value="remember" color="primary" />}
                                     label="Remember me"

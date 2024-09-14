@@ -2,28 +2,47 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import cors from 'cors';
-import connectDB from './backend/connectDB.js';
+import connectDB from './backend/services/connectDB.js';
 import dotenv from 'dotenv';
 import createPdf from './serverUtils/createPdf.js';
-import { User, NoteSheet } from './backend/model/Schemas.js';
-import { GiMailShirt } from 'react-icons/gi';
-import { title } from 'process';
-import { time } from 'console';
+// import { User, NoteSheet, NoteSheetAction, Fund, Template } from './backend/model/Schemas.js';
+
+import { User } from './backend/model/user.js';
+import { NoteSheet } from './backend/model/notesheet.js';
+import { Template } from './backend/model/template.js';
+import { NoteSheetAction } from './backend/model/notesheetAction.js';
+import { Fund } from './backend/model/fund.js';
+
+import { checkForAuthenticationCookie } from './middlewares/authentication.js';
 
 dotenv.config();
 const Schema = mongoose.Schema;
 // const ObjectId = Schema.Types.ObjectId;
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+
+app.use(
+    cors({
+        origin: 'http://localhost:3001', // Replace with your frontend URL
+        methods: ['GET', 'POST', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
+        credentials: true, // If you need to send cookies
+        allowedHeaders: ['Content-Type', 'Authorization'],
+    })
+);
+app.options('*', cors());
+
+app.use(express.json());
 
 connectDB();
 
-app.use(cors());
-app.use(express.json());
+app.use(checkForAuthenticationCookie('token'));
 
 app.get('/', (req, res) => {
     res.send('Hello World');
+});
+app.get('/newUser', (req, res) => {
+    res.send('New User');
 });
 app.get('/notesheets', (req, res) => {
     res.send('Your notesheets');
@@ -31,7 +50,6 @@ app.get('/notesheets', (req, res) => {
 app.get('/newnotesheet', (req, res) => {
     res.send('New notesheet');
 });
-
 app.get('/pendingheets', (req, res) => {
     res.send('Pending Sheets');
 });
@@ -40,34 +58,41 @@ app.get('/verifyuser', (req, res) => {
     res.send('Verifying users');
 });
 
-// For finding userId
-app.post('/', async (req, res) => {
+//For finding user
+app.post('/', async (res, req) => {
     const { token } = req.body;
     const user = await User.findOne({ email: token });
     const userId = user._id.toString();
     res.send(userId);
 });
 
+// For creating new user
+app.post('/newUser', async (req, res) => {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const acc = new User({
+        fullName: req.body.userName,
+        email: req.body.email,
+        password: hashedPassword,
+        role: 'ADMIN',
+    });
+
+    await acc.save();
+    return;
+});
+
 //For verifying user
-//Adding token JWT
 app.post('/verifyuser', async (req, res) => {
     const { email, pass } = req.body;
     try {
-        let userinfo = await User.findOne({ email: email });
-
-        if (userinfo.length == 0) {
-            return res.status(404).send('Wrong User or Password');
-        }
+        const userinfo = await User.findOne({ email });
+        if (!userinfo) throw new Error('Wrong User or Password');
 
         let userpassword = userinfo.password;
-        if (userpassword !== pass)
-            if (await bcrypt.compare(pass, userpassword)) {
-                res.send(userpassword);
-            } else {
-                res.status(401).send('Wrong User or Password');
-            }
-        else {
-            res.send(userpassword);
+        if (await bcrypt.compare(pass, userpassword)) {
+            User.GenerateToken(userinfo);
+            res.send('User Verified');
+        } else {
+            res.status(401).send('Wrong User or Password');
         }
     } catch (err) {
         console.error('Error', err);
@@ -102,7 +127,7 @@ app.post('/newnotesheet', async (req, res) => {
     });
 
     await newNoteSheet.save();
-    await createPdf({ ...body, title }, "./public/pdfLogo.png", `./temporaryPdfStorage/output-${Date.now()}.pdf`);
+    await createPdf({ ...body, title }, './public/pdfLogo.png', `./temporaryPdfStorage/output-${Date.now()}.pdf`);
     console.log(body);
     console.log('Saved');
 });
