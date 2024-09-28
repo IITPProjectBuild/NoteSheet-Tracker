@@ -6,3 +6,9 @@ Content-Type: application/json
     "email": "arpitraj@gmail.com",
     "password": "123456"
 }
+
+###
+
+POST http://localhost:3000/test-cookie
+credentials: 'include'
+Content-Type: application/json

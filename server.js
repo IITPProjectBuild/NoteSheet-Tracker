@@ -2,11 +2,10 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import connectDB from './backend/services/connectDB.js';
 import dotenv from 'dotenv';
 import createPdf from './serverUtils/createPdf.js';
-// import { User, NoteSheet, NoteSheetAction, Fund, Template } from './backend/model/Schemas.js';
-
 import { User } from './backend/model/user.js';
 import { NoteSheet } from './backend/model/notesheet.js';
 import { Template } from './backend/model/template.js';
@@ -24,15 +23,12 @@ const port = process.env.PORT || 3000;
 
 app.use(
     cors({
-        origin: 'http://localhost:3001', // Replace with your frontend URL
-        methods: ['GET', 'POST', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
-        credentials: true, // If you need to send cookies
-        allowedHeaders: ['Content-Type', 'Authorization'],
+        origin: 'http://localhost:3001',
+        credentials: true,
     })
 );
-app.options('*', cors());
-
 app.use(express.json());
+app.use(cookieParser());
 
 connectDB();
 
@@ -53,13 +49,12 @@ app.get('/newnotesheet', (req, res) => {
 app.get('/pendingheets', (req, res) => {
     res.send('Pending Sheets');
 });
-
 app.get('/verifyuser', (req, res) => {
     res.send('Verifying users');
 });
 
 //For finding user
-app.post('/', async (res, req) => {
+app.post('/', async (req, res) => {
     const { token } = req.body;
     const user = await User.findOne({ email: token });
     const userId = user._id.toString();
@@ -82,14 +77,27 @@ app.post('/newUser', async (req, res) => {
 
 //For verifying user
 app.post('/verifyuser', async (req, res) => {
+    console.log(req.body);
     const { email, pass } = req.body;
     try {
         const userinfo = await User.findOne({ email });
-        if (!userinfo) throw new Error('Wrong User or Password');
+        if (!userinfo) {
+            return res.status(401).send('Wrong User or Password');
+        }
 
         let userpassword = userinfo.password;
         if (await bcrypt.compare(pass, userpassword)) {
-            User.GenerateToken(userinfo);
+            console.log('generating token');
+            let token = await User.GenerateToken(userinfo);
+            console.log(token);
+
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'strict',
+                maxAge: 3600000,
+                path: '/',
+            });
             res.send('User Verified');
         } else {
             res.status(401).send('Wrong User or Password');

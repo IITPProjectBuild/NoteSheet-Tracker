@@ -1,7 +1,7 @@
 'use client';
 import * as React from 'react';
 import { useState } from 'react';
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,11 +12,11 @@ import Link from 'next/link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+// import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Calistoga } from 'next/font/google';
-import { convertLength } from '@mui/material/styles/cssUtils';
+// import { Calistoga } from 'next/font/google';
+// import { convertLength } from '@mui/material/styles/cssUtils';
 import { IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
@@ -40,6 +40,7 @@ export default function SignInSide() {
         };
 
         try {
+            // let redirectUrl = new URLSearchParams(window.location.search).get('redirect') || '/HomePage';
             let response = await fetch('http://localhost:3000/verifyuser', {
                 method: 'POST',
                 credentials: 'include',
@@ -49,16 +50,12 @@ export default function SignInSide() {
                 body: JSON.stringify(userdata),
             });
 
-            // Check if the response is successful
             let result = await response.text();
 
-            if (result !== 'Wrong User or Password') {
-                userdata.pass = result;
-                localStorage.setItem('userInfo', JSON.stringify({ email: userdata.email }));
-
+            if (response.ok) {
+                // window.location.href = redirectUrl;
                 window.location.href = '/HomePage';
             } else {
-                // Handle other responses
                 alert('Login failed: ' + result);
             }
         } catch (error) {
